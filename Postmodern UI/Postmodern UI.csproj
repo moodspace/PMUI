@@ -56,6 +56,14 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Helper.cs" />
+    <Compile Include="PopupMenu.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PopupMenu.Designer.cs">
+      <DependentUpon>PopupMenu.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PopupMenuData.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />
@@ -70,6 +78,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PopupMenu.resx">
+      <DependentUpon>PopupMenu.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

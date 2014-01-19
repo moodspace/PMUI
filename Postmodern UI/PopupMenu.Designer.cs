@@ -1,6 +1,6 @@
 ﻿namespace Postmodern_UI
 {
-    partial class Tile
+    partial class PopupMenu
     {
         /// <summary> 
         /// Required designer variable.
@@ -28,27 +28,35 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.menuItem1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
-            // Tile
+            // menuItem1
+            // 
+            this.menuItem1.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.menuItem1.Location = new System.Drawing.Point(2, 5);
+            this.menuItem1.Name = "menuItem1";
+            this.menuItem1.Size = new System.Drawing.Size(166, 40);
+            this.menuItem1.TabIndex = 0;
+            this.menuItem1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // PopupMenu
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.BackColor = System.Drawing.Color.Transparent;
-            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.Font = new System.Drawing.Font("Segoe UI Light", 9.5F);
-            this.Name = "Tile";
-            this.Load += new System.EventHandler(this.Tile_Load);
-            this.DoubleClick += new System.EventHandler(this.Tile_DoubleClick);
-            this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Tile_MouseClick);
-            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Tile_MouseDown);
-            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Tile_MouseMove);
-            this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Tile_MouseUp);
+            this.BackColor = System.Drawing.Color.White;
+            this.Controls.Add(this.menuItem1);
+            this.Font = new System.Drawing.Font("Segoe UI Semibold", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Name = "PopupMenu";
+            this.Size = new System.Drawing.Size(170, 150);
+            this.Load += new System.EventHandler(this.PopupMenu_Load);
             this.ResumeLayout(false);
 
         }
 
         #endregion
+
+        private System.Windows.Forms.Label menuItem1;
 
     }
 }

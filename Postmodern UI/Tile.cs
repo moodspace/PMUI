@@ -14,29 +14,28 @@ namespace Postmodern_UI
     {
         public bool selected = false;
 
-        public Settings.TWidth TWidth;
-        public Settings.THeight THeight;
+        public Settings.TSize TSize;
         public Bitmap icon;
         public String title, subtitle;
         public Color tileColor;
+        public AlignManager alignmanager;
 
-        public Tile(String title, String subtitle, String status, Bitmap icon, Settings.TWidth TWidth, Settings.THeight THeight, Color tileColor)
+        public Tile(String[] textgroup, Bitmap icon, Settings.TSize TSize, Color tileColor, AlignManager am)
         {
             InitializeComponent();
 
             this.icon = icon;
 
-            this.TWidth = TWidth;
-            this.THeight = THeight;
+            this.TSize = TSize;
 
-            this.title = title;
-            this.subtitle = subtitle;
+            this.title = textgroup[0];
+            this.subtitle = textgroup[1];
             this.tileColor = tileColor;
 
             //set font
             this.Font = new Font("Segoe UI Light", 9.5f);
 
-            
+            alignmanager = am;
             
         }
 
@@ -56,7 +55,7 @@ namespace Postmodern_UI
 
             Graphics g = prepareGraphics(bg);
 
-            if (iconBox.Image == null)
+            if (icon == null)
             {
                 //fill in solid color
                 g.FillRectangle(new SolidBrush(color), new Rectangle(new Point(0, 0), this.Size));
@@ -64,7 +63,7 @@ namespace Postmodern_UI
             else
             {
                 //fill in gradient color
-                Color mainTone = colorMatcher((Bitmap)iconBox.Image);
+                Color mainTone = colorMatcher(icon);
                 LinearGradientBrush brush = new LinearGradientBrush(new Point(0, 0), new Point(this.Width, 0), mainTone, brighterColor(mainTone));
                 g.FillRectangle(brush, new Rectangle(new Point(0, 0), this.Size));
             }
@@ -77,6 +76,9 @@ namespace Postmodern_UI
         /** Precondition: background with either fill has been set */
         private void printText()
         {
+            if (TSize == Settings.TSize.small)
+                return;
+
             Graphics g = prepareGraphics(this.BackgroundImage);
 
             g.DrawString(title, this.Font, Brushes.White, new PointF(10, this.Height - 20));
@@ -90,17 +92,54 @@ namespace Postmodern_UI
             refreshTile();
         }
 
-        public void loadIcon(Bitmap icon)
+        internal void printIcon()
         {
             //set tile icon
             int preferredDimension = Math.Min((int)(Math.Min(this.Width, this.Height) / 1.6), icon.Width);
-            this.iconBox.Image = new Bitmap(icon, new Size(preferredDimension, preferredDimension));
+            if (this.icon.Width != preferredDimension || this.icon.Height != preferredDimension)
+                this.icon = new Bitmap(icon, new Size(preferredDimension, preferredDimension));
+            
+            Graphics g = prepareGraphics(this.BackgroundImage);
+            int iconTopLeft = (Math.Min(this.Width, this.Height) - preferredDimension) / 2;
+            g.DrawImageUnscaled(icon, new Point(iconTopLeft, iconTopLeft));
+            g.Save(); g.Dispose();
         }
 
-        public void resize(Settings.TWidth width, Settings.THeight height)
+        internal void resize(Settings.TSize size)
         {
-            //set tile size
-            this.Size = new Size(Settings.tile_unit_length * (int)width, Settings.tile_unit_length * (int)height);
+            Point tentativePosition = alignmanager.findTileLocation(this); //store the current location
+            alignmanager.Remove(this); //clean up in register, and GUI
+            this.Size = getActualSize(size); //change of actual size
+            
+            TSize = size; //TSize changed, can re-register now
+            alignmanager.TryAdd(tentativePosition, this);
+        }
+
+        internal static Size getActualSize(Settings.TSize size)
+        {
+            int width, height;
+            switch (size)
+            {
+                case Settings.TSize.small:
+                    height = width = Settings.tile_unit_length; break;
+                case Settings.TSize.medium:
+                    height = width = Settings.tile_2X_unit_length; break;
+                case Settings.TSize.large:
+                    height = width = Settings.tile_4X_unit_length; break;
+                default:
+                    {
+                        height = Settings.tile_2X_unit_length;
+                        width = Settings.tile_4X_unit_length;
+                        break;
+                    }
+            }
+
+            return new Size(width, height);
+        }
+
+        public Size getActualSize()
+        {
+            return getActualSize(this.TSize);
         }
 
         private Color colorMatcher(Bitmap iconBitmap)
@@ -141,8 +180,10 @@ namespace Postmodern_UI
         bool readyMove = false;
         Point latestPosition = new Point(0, 0);
 
-        private void iconBox_MouseDown(object sender, MouseEventArgs e)
+        private void Tile_MouseDown(object sender, MouseEventArgs e)
         {
+            this.BringToFront();
+
             if (e.Button != System.Windows.Forms.MouseButtons.Left)
                 return;
 
@@ -160,7 +201,7 @@ namespace Postmodern_UI
                 c.Visible = false;
         }
 
-        private void iconBox_MouseUp(object sender, MouseEventArgs e)
+        private void Tile_MouseUp(object sender, MouseEventArgs e)
         {
             if (e.Button != System.Windows.Forms.MouseButtons.Left)
                 return;
@@ -169,13 +210,15 @@ namespace Postmodern_UI
             restoreControls();
 
             readyMove = false;
+
+            this.Size = getActualSize();
         }
 
         private void refreshTile()
         {
-            resize(TWidth, THeight);
-            loadIcon(icon);
+            this.Size = getActualSize();
             setTileColor(tileColor);
+            printIcon();
             printText();
         }
 
@@ -200,7 +243,7 @@ namespace Postmodern_UI
         {
             Bitmap selected = getSnapshot();
             Graphics g = Graphics.FromImage(selected);
-            g.DrawRectangle(new Pen(Color.Gray, 7), new Rectangle(new Point(0, 0), this.Size));
+            g.DrawRectangle(new Pen(Settings.secondColor, 5), new Rectangle(new Point(0, 0), this.Size));
             g.Save();
             BackgroundImage = selected;
             hideControls();
@@ -219,15 +262,27 @@ namespace Postmodern_UI
 
             if (selected)
                 deselect();
+            else
+                select();
 
             selected = !selected;
         }
 
-        private void iconBox_MouseMove(object sender, MouseEventArgs e)
+        private void Tile_MouseMove(object sender, MouseEventArgs e)
         {
             if (readyMove)
+            {
+                Size originalSize = getActualSize();
+                this.Size = new Size(originalSize.Width + (int)Settings.getTWidth(TSize) * 3, originalSize.Height + (int)Settings.getTHeight(TSize) * 3);
                 this.Location = new Point(this.Left - latestPosition.X + e.X, this.Top - latestPosition.Y + e.Y);
+                this.BackgroundImageLayout = ImageLayout.Stretch;
+            }
+        }
 
+        private void Tile_DoubleClick(object sender, EventArgs e)
+        {
+            //tests
+            this.resize(Settings.TSize.medium);
         }
     }
 }

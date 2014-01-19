@@ -33,11 +33,10 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.userInfo = new System.Windows.Forms.PictureBox();
+            this.labelUsername = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.userInfo)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -45,7 +44,7 @@
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Segoe UI Light", 45F);
             this.label1.ForeColor = System.Drawing.Color.White;
-            this.label1.Location = new System.Drawing.Point(104, 46);
+            this.label1.Location = new System.Drawing.Point(104, 42);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(269, 81);
             this.label1.TabIndex = 1;
@@ -87,18 +86,23 @@
             this.pictureBox1.TabStop = false;
             this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
             // 
-            // userInfo
+            // labelUsername
             // 
-            this.userInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.userInfo.BackColor = System.Drawing.Color.WhiteSmoke;
-            this.userInfo.Image = ((System.Drawing.Image)(resources.GetObject("userInfo.Image")));
-            this.userInfo.Location = new System.Drawing.Point(636, 65);
-            this.userInfo.Name = "userInfo";
-            this.userInfo.Size = new System.Drawing.Size(40, 40);
-            this.userInfo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.userInfo.TabIndex = 0;
-            this.userInfo.TabStop = false;
-            this.userInfo.Click += new System.EventHandler(this.userInfo_Click);
+            this.labelUsername.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelUsername.BackColor = System.Drawing.Color.Transparent;
+            this.labelUsername.Font = new System.Drawing.Font("Segoe UI Semibold", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelUsername.ForeColor = System.Drawing.Color.White;
+            this.labelUsername.Image = global::Postmodern_UI.Properties.Resources.user;
+            this.labelUsername.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.labelUsername.Location = new System.Drawing.Point(579, 52);
+            this.labelUsername.Name = "labelUsername";
+            this.labelUsername.Size = new System.Drawing.Size(107, 57);
+            this.labelUsername.TabIndex = 6;
+            this.labelUsername.Text = "Ke\r\nQian";
+            this.labelUsername.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.labelUsername.Click += new System.EventHandler(this.labelUsername_Click);
+            this.labelUsername.MouseLeave += new System.EventHandler(this.labelUsername_MouseLeave);
+            this.labelUsername.MouseMove += new System.Windows.Forms.MouseEventHandler(this.labelUsername_MouseMove);
             // 
             // Form1
             // 
@@ -108,7 +112,7 @@
             this.ClientSize = new System.Drawing.Size(728, 577);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.userInfo);
+            this.Controls.Add(this.labelUsername);
             this.DoubleBuffered = true;
             this.Font = new System.Drawing.Font("Segoe UI Light", 9.5F);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
@@ -120,7 +124,6 @@
             this.panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.userInfo)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -128,11 +131,11 @@
 
         #endregion
 
-        private System.Windows.Forms.PictureBox userInfo;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.PictureBox pictureBox2;
+        private System.Windows.Forms.Label labelUsername;
     }
 }
 
