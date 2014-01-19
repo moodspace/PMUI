@@ -47,7 +47,10 @@ namespace Postmodern_UI
                 }
             }
 
-            fixToAnchor(point, tile); //align the tile on display device
+            foreach (Tile t in getTiles(new Point(0, 0))) {
+                fixToAnchor(findTileLocation(t), t); //align the tile on display device
+            }
+            
             display.Controls.Add(tile); //show on display device
         }
 
@@ -114,7 +117,7 @@ namespace Postmodern_UI
             || (tsize == Settings.TSize.large && current.X % 4 == 0 && current.Y % 4 == 0));
         }
 
-        internal void Remove(Tile tile)
+        internal void RemoveFromRegister(Tile tile)
         {
             Point point = findTileLocation(tile);
             for (int m = point.Y; m < point.Y + Settings.getTHeight(tile.TSize); m++)
@@ -124,6 +127,11 @@ namespace Postmodern_UI
                     register[m, n] = null;
                 }
             }
+        }
+
+        internal void Remove(Tile tile)
+        {
+            RemoveFromRegister(tile);
             display.Controls.Remove(tile); //remove from display device
         }
 
@@ -210,6 +218,14 @@ namespace Postmodern_UI
                 point.Y * Settings.tile_unit_length + point.Y * Settings.small_span);
         }
 
-        /** add a new tile and re-allocate the existing tile holding the position when needed */
+        internal Point approximatePosition(Point pointToDisplay, Tile tile)
+        {
+            int approx_X = (pointToDisplay.X - Settings.tile_left_screen) / 
+                (Settings.tile_unit_length + Settings.small_span);
+            int approx_Y = (pointToDisplay.Y - Settings.tile_top_screen) /
+                    (Settings.tile_unit_length + Settings.small_span);
+
+            return new Point(approx_X, approx_Y);
+        }
     }
 }

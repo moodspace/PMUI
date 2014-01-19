@@ -200,6 +200,8 @@ namespace Postmodern_UI
 
             leftMouseIsDown = true;
             latestPosition = e.Location;
+
+            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Tile_MouseMove);
         }
 
         private void hideControls()
@@ -210,7 +212,7 @@ namespace Postmodern_UI
 
         private void Tile_MouseUp(object sender, MouseEventArgs e)
         {
-            mouseIsMoving = false;
+            this.MouseMove -= new System.Windows.Forms.MouseEventHandler(this.Tile_MouseMove);
 
             if (e.Button != System.Windows.Forms.MouseButtons.Left)
                 return;
@@ -276,20 +278,33 @@ namespace Postmodern_UI
 
         private void Tile_MouseMove(object sender, MouseEventArgs e)
         {
-            mouseIsMoving = true;
-            if (leftMouseIsDown)
+
+            Point approx = alignmanager.approximatePosition(this.Location, this);
+            if (approx != alignmanager.findTileLocation(this))
             {
-                Size originalSize = getActualSize();
-                this.Size = new Size(originalSize.Width + (int)Settings.getTWidth(TSize) * 3, originalSize.Height + (int)Settings.getTHeight(TSize) * 3);
-                this.Location = new Point(this.Left - latestPosition.X + e.X, this.Top - latestPosition.Y + e.Y);
-                this.BackgroundImageLayout = ImageLayout.Stretch;
+                alignmanager.Remove(this); alignmanager.TryAdd(approx, this);
             }
+
+            Size originalSize = getActualSize();
+            this.Size = new Size(originalSize.Width + (int)Settings.getTWidth(TSize) * 3, originalSize.Height + (int)Settings.getTHeight(TSize) * 3);
+            this.Location = new Point(this.Left - latestPosition.X + e.X, this.Top - latestPosition.Y + e.Y);
+            this.BackgroundImageLayout = ImageLayout.Stretch;
+
         }
 
         private void Tile_DoubleClick(object sender, EventArgs e)
         {
-            //tests
             this.resize(Settings.TSize.medium);
+        }
+
+        private void Tile_MouseHover(object sender, EventArgs e)
+        {
+            this.MouseMove -= new System.Windows.Forms.MouseEventHandler(this.Tile_MouseMove);
+        }
+
+        private void Tile_MouseLeave(object sender, EventArgs e)
+        {
+            this.MouseMove -= new System.Windows.Forms.MouseEventHandler(this.Tile_MouseMove);
         }
     }
 }
