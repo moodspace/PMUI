@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 
 namespace Postmodern_UI
 {
@@ -71,5 +73,20 @@ namespace Postmodern_UI
 
             return points;
         }
+
+        public static List<String> albumGrabber(String dir, Size minSize)
+        {
+            DirectoryInfo info = new DirectoryInfo(dir);
+
+            FileInfo[] files = info.GetFiles("*.jpg", SearchOption.AllDirectories);
+            List<String> usableImgs = new List<String>();
+            foreach (FileInfo file in files)
+            {
+                if (file.Length > 104448)
+                    usableImgs.Add(file.FullName);
+            }
+            return usableImgs;
+        }
+
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 
 namespace Postmodern_UI
 {
@@ -52,6 +53,19 @@ namespace Postmodern_UI
                 default:
                     return 2;
             }
+        }
+
+        public static TSize getTSize(String sizeInfo)
+        {
+            sizeInfo = sizeInfo.ToLower();
+            if (sizeInfo.Contains("med"))
+                return TSize.medium;
+            else if (sizeInfo.Contains("big") || sizeInfo.Contains("large"))
+                return TSize.large;
+            else if (sizeInfo.Contains("wide") || sizeInfo.Contains("banner"))
+                return TSize.wide;
+            else
+                return TSize.small;
         }
     }
 }

@@ -57,6 +57,12 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="Helper.cs" />
+    <Compile Include="InputBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="InputBox.Designer.cs">
+      <DependentUpon>InputBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="PopupMenu.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -73,11 +79,20 @@
     <Compile Include="Tile.Designer.cs">
       <DependentUpon>Tile.cs</DependentUpon>
     </Compile>
+    <Compile Include="TileWebsite.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="TileWebsite.Designer.cs">
+      <DependentUpon>TileWebsite.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="ColorPicker.resx">
       <DependentUpon>ColorPicker.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InputBox.resx">
+      <DependentUpon>InputBox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PopupMenu.resx">
       <DependentUpon>PopupMenu.cs</DependentUpon>

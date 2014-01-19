@@ -1,20 +1,21 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using System.Windows.Forms;
 
 namespace Postmodern_UI
 {
     public class AlignManager
     {
-        private Form1 display;
+        private Panel display;
         private Tile[,] register;
 
-        public AlignManager(Form1 workingForm)
+        public AlignManager(Panel panel)
         {
             register = new Tile[8, 16];
-            display = workingForm;
+            display = panel;
         }
 
-        public bool canAdd(Point point, Settings.TSize size)
+        internal bool canAdd(Point point, Settings.TSize size)
         {
             //a bigger tile can't be added at certain point
             int theight = Settings.getTHeight(size);
@@ -109,8 +110,8 @@ namespace Postmodern_UI
         {
             return (tsize == Settings.TSize.small
             || (tsize == Settings.TSize.medium && current.X % 2 == 0 && current.Y % 2 == 0)
-            || (tsize == Settings.TSize.wide && current.X % 4 != 0 && current.Y % 2 != 0)
-            || (tsize == Settings.TSize.large && current.X % 4 != 0 && current.Y % 4 != 0));
+            || (tsize == Settings.TSize.wide && current.X % 4 == 0 && current.Y % 2 == 0)
+            || (tsize == Settings.TSize.large && current.X % 4 == 0 && current.Y % 4 == 0));
         }
 
         internal void Remove(Tile tile)

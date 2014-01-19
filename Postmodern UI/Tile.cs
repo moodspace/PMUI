@@ -20,14 +20,16 @@ namespace Postmodern_UI
         public Color tileColor;
         public AlignManager alignmanager;
 
-        public Tile(String[] textgroup, Bitmap icon, Settings.TSize TSize, Color tileColor, AlignManager am)
+        public Tile()
+        {
+            InitializeComponent();
+        }
+
+        public Tile(String[] textgroup, Bitmap icon, Color tileColor, AlignManager am)
         {
             InitializeComponent();
 
             this.icon = icon;
-
-            this.TSize = TSize;
-
             this.title = textgroup[0];
             this.subtitle = textgroup[1];
             this.tileColor = tileColor;
@@ -38,6 +40,10 @@ namespace Postmodern_UI
             alignmanager = am;
             
         }
+
+        public Tile(String[] textgroup, Settings.TSize TSize, Color tileColor, AlignManager am) :
+            this(textgroup, Helper.getRandomUsrImg(new Size(128, 128)), tileColor, am) { ;}
+        
 
         private Graphics prepareGraphics(Image image)
         {
@@ -87,7 +93,7 @@ namespace Postmodern_UI
             g.Save(); g.Dispose();
         }
 
-        private void Tile_Load(object sender, EventArgs e)
+        public void Tile_Load(object sender, EventArgs e)
         {
             refreshTile();
         }
@@ -177,7 +183,8 @@ namespace Postmodern_UI
             return snapshot;
         }
 
-        bool readyMove = false;
+        bool leftMouseIsDown = false;
+        bool mouseIsMoving = false;
         Point latestPosition = new Point(0, 0);
 
         private void Tile_MouseDown(object sender, MouseEventArgs e)
@@ -191,7 +198,7 @@ namespace Postmodern_UI
             this.BackgroundImageLayout = ImageLayout.Center;
             hideControls();
 
-            readyMove = true;
+            leftMouseIsDown = true;
             latestPosition = e.Location;
         }
 
@@ -203,18 +210,20 @@ namespace Postmodern_UI
 
         private void Tile_MouseUp(object sender, MouseEventArgs e)
         {
+            mouseIsMoving = false;
+
             if (e.Button != System.Windows.Forms.MouseButtons.Left)
                 return;
 
             this.refreshTile();
             restoreControls();
 
-            readyMove = false;
+            leftMouseIsDown = false;
 
             this.Size = getActualSize();
         }
 
-        private void refreshTile()
+        internal void refreshTile()
         {
             this.Size = getActualSize();
             setTileColor(tileColor);
@@ -226,17 +235,6 @@ namespace Postmodern_UI
         {
             foreach (Control c in this.Controls)
                 c.Visible = true;
-        }
-
-        private void iconBox_MouseClick(object sender, MouseEventArgs e)
-        {
-            if (e.Button != System.Windows.Forms.MouseButtons.Right)
-                return;
-
-            if (!selected)
-                select();
-
-            selected = !selected;
         }
 
         private void select()
@@ -257,20 +255,29 @@ namespace Postmodern_UI
 
         private void Tile_MouseClick(object sender, MouseEventArgs e)
         {
-            if (e.Button != System.Windows.Forms.MouseButtons.Right)
-                return;
+            if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            {
 
-            if (selected)
-                deselect();
+                if (selected)
+                    deselect();
+                else
+                    select();
+
+                selected = !selected;
+            }
             else
-                select();
-
-            selected = !selected;
+            {
+                if (!mouseIsMoving)
+                    doAction();
+            }
         }
+
+        internal virtual void doAction() { }
 
         private void Tile_MouseMove(object sender, MouseEventArgs e)
         {
-            if (readyMove)
+            mouseIsMoving = true;
+            if (leftMouseIsDown)
             {
                 Size originalSize = getActualSize();
                 this.Size = new Size(originalSize.Width + (int)Settings.getTWidth(TSize) * 3, originalSize.Height + (int)Settings.getTHeight(TSize) * 3);
