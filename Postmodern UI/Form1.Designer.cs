@@ -32,17 +32,17 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.label1 = new System.Windows.Forms.Label();
             this.panelTool = new System.Windows.Forms.Panel();
-            this.timerBackground = new System.Windows.Forms.Timer(this.components);
-            this.panelMain = new System.Windows.Forms.Panel();
             this.pictureBox3 = new System.Windows.Forms.PictureBox();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.timerBackground = new System.Windows.Forms.Timer(this.components);
+            this.panelMain = new System.Windows.Forms.Panel();
             this.labelUsername = new System.Windows.Forms.Label();
             this.panelTool.SuspendLayout();
-            this.panelMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.panelMain.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -69,23 +69,6 @@
             this.panelTool.Name = "panelTool";
             this.panelTool.Size = new System.Drawing.Size(728, 75);
             this.panelTool.TabIndex = 4;
-            this.panelTool.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
-            // 
-            // timerBackground
-            // 
-            this.timerBackground.Interval = 5000;
-            this.timerBackground.Tick += new System.EventHandler(this.timerBackground_Tick);
-            // 
-            // panelMain
-            // 
-            this.panelMain.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.panelMain.Controls.Add(this.label1);
-            this.panelMain.Controls.Add(this.labelUsername);
-            this.panelMain.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelMain.Location = new System.Drawing.Point(0, 0);
-            this.panelMain.Name = "panelMain";
-            this.panelMain.Size = new System.Drawing.Size(728, 577);
-            this.panelMain.TabIndex = 5;
             // 
             // pictureBox3
             // 
@@ -126,6 +109,22 @@
             this.pictureBox1.TabStop = false;
             this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
             // 
+            // timerBackground
+            // 
+            this.timerBackground.Interval = 5000;
+            this.timerBackground.Tick += new System.EventHandler(this.timerBackground_Tick);
+            // 
+            // panelMain
+            // 
+            this.panelMain.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.panelMain.Controls.Add(this.label1);
+            this.panelMain.Controls.Add(this.labelUsername);
+            this.panelMain.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelMain.Location = new System.Drawing.Point(0, 0);
+            this.panelMain.Name = "panelMain";
+            this.panelMain.Size = new System.Drawing.Size(728, 577);
+            this.panelMain.TabIndex = 5;
+            // 
             // labelUsername
             // 
             this.labelUsername.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -162,11 +161,11 @@
             this.Load += new System.EventHandler(this.Form1_Load);
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseMove);
             this.panelTool.ResumeLayout(false);
-            this.panelMain.ResumeLayout(false);
-            this.panelMain.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.panelMain.ResumeLayout(false);
+            this.panelMain.PerformLayout();
             this.ResumeLayout(false);
 
         }

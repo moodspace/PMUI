@@ -114,11 +114,11 @@ namespace Postmodern_UI
         internal void resize(Settings.TSize size)
         {
             Point tentativePosition = alignmanager.findTileLocation(this); //store the current location
-            alignmanager.Remove(this); //clean up in register, and GUI
+            alignmanager.Remove(this, false); //clean up in register, and GUI
             this.Size = getActualSize(size); //change of actual size
             
             TSize = size; //TSize changed, can re-register now
-            alignmanager.TryAdd(tentativePosition, this);
+            alignmanager.TryAdd(tentativePosition, this, false);
         }
 
         internal static Size getActualSize(Settings.TSize size)
@@ -183,46 +183,10 @@ namespace Postmodern_UI
             return snapshot;
         }
 
-        bool leftMouseIsDown = false;
-        bool mouseIsMoving = false;
-        Point latestPosition = new Point(0, 0);
-
-        private void Tile_MouseDown(object sender, MouseEventArgs e)
-        {
-            this.BringToFront();
-
-            if (e.Button != System.Windows.Forms.MouseButtons.Left)
-                return;
-
-            BackgroundImage = new Bitmap(getSnapshot(), this.Width - 5, this.Height - 5);
-            this.BackgroundImageLayout = ImageLayout.Center;
-            hideControls();
-
-            leftMouseIsDown = true;
-            latestPosition = e.Location;
-
-            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Tile_MouseMove);
-        }
-
         private void hideControls()
         {
             foreach (Control c in this.Controls)
                 c.Visible = false;
-        }
-
-        private void Tile_MouseUp(object sender, MouseEventArgs e)
-        {
-            this.MouseMove -= new System.Windows.Forms.MouseEventHandler(this.Tile_MouseMove);
-
-            if (e.Button != System.Windows.Forms.MouseButtons.Left)
-                return;
-
-            this.refreshTile();
-            restoreControls();
-
-            leftMouseIsDown = false;
-
-            this.Size = getActualSize();
         }
 
         internal void refreshTile()
@@ -231,12 +195,6 @@ namespace Postmodern_UI
             setTileColor(tileColor);
             printIcon();
             printText();
-        }
-
-        private void restoreControls()
-        {
-            foreach (Control c in this.Controls)
-                c.Visible = true;
         }
 
         private void select()
@@ -252,14 +210,12 @@ namespace Postmodern_UI
         private void deselect()
         {
             refreshTile();
-            restoreControls();
         }
 
         private void Tile_MouseClick(object sender, MouseEventArgs e)
         {
             if (e.Button == System.Windows.Forms.MouseButtons.Right)
             {
-
                 if (selected)
                     deselect();
                 else
@@ -269,42 +225,62 @@ namespace Postmodern_UI
             }
             else
             {
-                if (!mouseIsMoving)
-                    doAction();
+                doAction();
             }
         }
 
         internal virtual void doAction() { }
-
-        private void Tile_MouseMove(object sender, MouseEventArgs e)
-        {
-
-            Point approx = alignmanager.approximatePosition(this.Location, this);
-            if (approx != alignmanager.findTileLocation(this))
-            {
-                alignmanager.Remove(this); alignmanager.TryAdd(approx, this);
-            }
-
-            Size originalSize = getActualSize();
-            this.Size = new Size(originalSize.Width + (int)Settings.getTWidth(TSize) * 3, originalSize.Height + (int)Settings.getTHeight(TSize) * 3);
-            this.Location = new Point(this.Left - latestPosition.X + e.X, this.Top - latestPosition.Y + e.Y);
-            this.BackgroundImageLayout = ImageLayout.Stretch;
-
-        }
 
         private void Tile_DoubleClick(object sender, EventArgs e)
         {
             this.resize(Settings.TSize.medium);
         }
 
-        private void Tile_MouseHover(object sender, EventArgs e)
+        private void Tile_MouseDown(object sender, MouseEventArgs e)
         {
-            this.MouseMove -= new System.Windows.Forms.MouseEventHandler(this.Tile_MouseMove);
+            if (e.Button != System.Windows.Forms.MouseButtons.Left)
+                return;
+
+            this.BringToFront();
+
+            BackgroundImage = new Bitmap(getSnapshot(), this.Width - 4, this.Height - 4);
+            this.Width -= 4; this.Left += 2; this.Top += 2; this.Height -= 4;
+            this.BackgroundImageLayout = ImageLayout.Center;
+
+            lastMousePoint = new Point(e.X - 2, e.Y - 2);
+            leftMouseDown = true;
+            lastLocationInGrid = this.Location;
         }
 
-        private void Tile_MouseLeave(object sender, EventArgs e)
+        private void Tile_MouseUp(object sender, MouseEventArgs e)
         {
-            this.MouseMove -= new System.Windows.Forms.MouseEventHandler(this.Tile_MouseMove);
+            if (e.Button != System.Windows.Forms.MouseButtons.Left)
+                return;
+
+
+            this.Width += 4; this.Left -= 2; this.Top -= 2; this.Height += 4;
+
+            this.refreshTile();
+            this.Size = getActualSize();
+
+            leftMouseDown = false;
+            lastMousePoint = new Point(-1, -1);
+
+            alignmanager.move(alignmanager.approximatePosition(lastLocationInGrid), alignmanager.approximatePosition(new Point(Left + this.Width / 2, Top + this.Height / 2)));
+        }
+
+        bool leftMouseDown;
+        Point lastMousePoint = new Point(-1, -1);
+        Point lastLocationInGrid;
+
+        private void Tile_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (leftMouseDown && (e.Location != lastMousePoint))
+            {
+                this.BringToFront();
+                this.Left += (e.X - lastMousePoint.X);
+                this.Top += (e.Y - lastMousePoint.Y);
+            }
         }
     }
 }

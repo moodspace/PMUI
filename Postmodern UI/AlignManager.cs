@@ -37,7 +37,7 @@ namespace Postmodern_UI
             return register[Y, X];
         }
 
-        internal void Add(Point point, Tile tile)
+        internal void Add(Point point, Tile tile, bool isNewTile)
         {
             for (int m = point.Y; m < point.Y + Settings.getTHeight(tile.TSize); m++)
             {
@@ -50,8 +50,11 @@ namespace Postmodern_UI
             foreach (Tile t in getTiles(new Point(0, 0))) {
                 fixToAnchor(findTileLocation(t), t); //align the tile on display device
             }
-            
-            display.Controls.Add(tile); //show on display device
+
+            if (isNewTile)
+                display.Controls.Add(tile); //add to display device
+            else
+                tile.Show(); //recover display
         }
 
         internal Point findTileLocation(Tile tile)
@@ -117,7 +120,7 @@ namespace Postmodern_UI
             || (tsize == Settings.TSize.large && current.X % 4 == 0 && current.Y % 4 == 0));
         }
 
-        internal void RemoveFromRegister(Tile tile)
+        internal void Remove(Tile tile, bool dispose)
         {
             Point point = findTileLocation(tile);
             for (int m = point.Y; m < point.Y + Settings.getTHeight(tile.TSize); m++)
@@ -127,31 +130,39 @@ namespace Postmodern_UI
                     register[m, n] = null;
                 }
             }
+
+            tile.Hide();
+
+            if (dispose)
+            {
+                display.Controls.Remove(tile); //remove from display device
+                tile.Dispose();
+            }
         }
 
-        internal void Remove(Tile tile)
+        internal Point findElligibleInsertion(Point originalPoint, Settings.TSize tileSize)
         {
-            RemoveFromRegister(tile);
-            display.Controls.Remove(tile); //remove from display device
-        }
-
-        internal void TryAdd(Point insertionPoint, Tile newTile)
-        {
-            int totalTilesMove = Settings.getTWidth(newTile.TSize) * Settings.getTHeight(newTile.TSize);
-            //the first point to claim must be eligible as the top left of a certain sized tile
-            Point elligibleInsertion;
-            if (isEligibleInsertion(insertionPoint, newTile.TSize))
-                elligibleInsertion = new Point(insertionPoint.X, insertionPoint.Y);
+            if (isEligibleInsertion(originalPoint, tileSize))
+                return new Point(originalPoint.X, originalPoint.Y);
             else
-                elligibleInsertion = getNext(insertionPoint, newTile.TSize);
+                return getNext(originalPoint, tileSize);
+        }
 
+        internal Point TryAdd(Point tryAddPoint, Tile tile, bool isNewTile)
+        {
+            int totalTilesMove = Settings.getTWidth(tile.TSize) * Settings.getTHeight(tile.TSize);
+            //the first point to claim must be eligible as the top left of a certain sized tile
+
+            Point addPoint = findElligibleInsertion(tryAddPoint, tile.TSize);
             List<Tile> removedTiles = new List<Tile>();
-            if (!canAdd(elligibleInsertion, newTile.TSize))
-                removedTiles = RemoveFrom(elligibleInsertion);
+            if (!canAdd(addPoint, tile.TSize))
+                removedTiles = RemoveFrom(addPoint, false);
 
-            Add(elligibleInsertion, newTile);
+            Add(addPoint, tile, isNewTile);
 
-            AddRange(getNext(elligibleInsertion, newTile.TSize), removedTiles);
+            AddRange(getNext(addPoint, tile.TSize), removedTiles);
+
+            return addPoint;
         }
 
         /** clear the entry in register and wipe related blocks in inUse*/
@@ -166,7 +177,6 @@ namespace Postmodern_UI
 
             Point nextPoint = getNext(startPosition, Settings.TSize.small);
             
-
             while (nextPoint.Y < register.GetLength(0) && nextPoint.X < register.GetLength(1))
             {
                 Tile nextTile = register[nextPoint.Y, nextPoint.X];
@@ -180,17 +190,15 @@ namespace Postmodern_UI
             return tiles;
         }
 
-        internal List<Tile> RemoveFrom(Point RemoveStart)
+        internal List<Tile> RemoveFrom(Point RemoveStart, bool dispose)
         {
             List<Tile> tiles = getTiles(RemoveStart);
             foreach (Tile t in tiles)
             {
-                Remove(t);
+                Remove(t, dispose);
             }
 
-            return tiles;
-
-            
+            return tiles; 
         }
 
         internal void AddRange(Point position, List<Tile> tiles)
@@ -198,14 +206,14 @@ namespace Postmodern_UI
             if (tiles.Count == 0)
                 return;
 
-            TryAdd(position, tiles[0]);
+            TryAdd(position, tiles[0], false);
             Point lastPosition = position;
             for (int i = 1; i < tiles.Count; i++)
             {
                 // re-align tiles, no need to concern the interference in calling TryAdd
                 // because all tiles required moving have been unregistered, therefore 
                 // no tiles hold while adding. use TryAdd because it excludes impossible positions
-                TryAdd(getNext(lastPosition, tiles[i - 1].TSize), tiles[i]);
+                TryAdd(getNext(lastPosition, tiles[i - 1].TSize), tiles[i], false);
                 lastPosition = findTileLocation(tiles[i]);
             }
         }
@@ -218,7 +226,7 @@ namespace Postmodern_UI
                 point.Y * Settings.tile_unit_length + point.Y * Settings.small_span);
         }
 
-        internal Point approximatePosition(Point pointToDisplay, Tile tile)
+        internal Point approximatePosition(Point pointToDisplay)
         {
             int approx_X = (pointToDisplay.X - Settings.tile_left_screen) / 
                 (Settings.tile_unit_length + Settings.small_span);
@@ -226,6 +234,25 @@ namespace Postmodern_UI
                     (Settings.tile_unit_length + Settings.small_span);
 
             return new Point(approx_X, approx_Y);
+        }
+
+        internal void move(Point source, Point destination)
+        {
+            Tile sourceTile = register[source.Y, source.X];
+            
+            // find the location that fits sourceTile, may be occupied
+            Point finalDest = findElligibleInsertion(destination, sourceTile.TSize);
+            Tile destTile = register[finalDest.Y, finalDest.X];
+
+            this.Remove(sourceTile, false);
+
+            if (destTile != null && destTile.TSize == sourceTile.TSize)
+            {
+                Remove(destTile, false);
+                Add(source, destTile, false);
+            }
+
+            this.Add(finalDest, sourceTile, false);
         }
     }
 }

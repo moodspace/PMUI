@@ -24,12 +24,13 @@ namespace Postmodern_UI
             imgEnum = foundImgs.GetEnumerator();
         }
 
-        private void addRandTile(int x, int y, Settings.TSize TSize)
+        private Tile addRandTile(int x, int y, Settings.TSize TSize)
         {
             Tile newTile = new Tile(new String[] { DateTime.Now.Second.ToString(), DateTime.Now.Minute.ToString() },
                 Helper.getRandomUsrImg(new Size(128, 128)), Color.Red, am);
             newTile.TSize = TSize;
-            am.TryAdd(new Point(x, y), newTile);
+            am.TryAdd(new Point(x, y), newTile, true);
+            return newTile;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -71,9 +72,14 @@ namespace Postmodern_UI
             labelUsername.BackColor = Settings.secondColor;
         }
 
+        Tile t1, t2, t3;
+
         private void pictureBox1_Click(object sender, EventArgs e)
         {
-            addRandTile(0, 0, Settings.TSize.wide);
+            addRandTile(0, 0, Settings.TSize.small);
+            //addRandTile(0, 0, Settings.TSize.wide);
+            //addRandTile(0, 0, Settings.TSize.wide);
+
             /* addRandTile(1, 0, Settings.TSize.small);
             addRandTile(0, 1, Settings.TSize.small);
             addRandTile(1, 1, Settings.TSize.small);
@@ -107,19 +113,13 @@ namespace Postmodern_UI
             this.BackgroundImage = Image.FromFile(imgEnum.Current);
         }
 
-        private void panel1_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
         private void pictureBox3_Click(object sender, EventArgs e)
         {
-
             TileWebsite newTile = new TileWebsite(new String[] { DateTime.Now.Second.ToString(), DateTime.Now.Minute.ToString() },
                  Settings.TSize.medium, Color.Red, am);
             InputBox webInput = new InputBox("Icon URL", "Website URL", "Size", "http://", "http://", newTile, "TileWebsite");
             webInput.Location = new Point(40, 40);
-            this.panelMain.Controls.Add(webInput);
+            panelMain.Controls.Add(webInput);
             webInput.BringToFront();
         }
     }

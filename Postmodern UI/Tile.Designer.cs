@@ -42,8 +42,7 @@
             this.DoubleClick += new System.EventHandler(this.Tile_DoubleClick);
             this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Tile_MouseClick);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Tile_MouseDown);
-            this.MouseLeave += new System.EventHandler(this.Tile_MouseLeave);
-            this.MouseHover += new System.EventHandler(this.Tile_MouseHover);
+            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Tile_MouseMove);
             this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Tile_MouseUp);
             this.ResumeLayout(false);
 

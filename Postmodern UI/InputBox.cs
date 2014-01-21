@@ -63,7 +63,7 @@ namespace Postmodern_UI
                         tileWeb.getIconFromWeb();
                         tileWeb.WebsiteURL = f2_;
                         tileWeb.TSize = Settings.getTSize(f3_);
-                        tileWeb.alignmanager.TryAdd(new Point(0, 0), tileWeb);
+                        tileWeb.alignmanager.TryAdd(new Point(0, 0), tileWeb, true);
                         break;
                     }
             }
