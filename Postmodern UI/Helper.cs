@@ -85,6 +85,7 @@ namespace Postmodern_UI
                 if (file.Length > 104448)
                     usableImgs.Add(file.FullName);
             }
+            
             return usableImgs;
         }
 

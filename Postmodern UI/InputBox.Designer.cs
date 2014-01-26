@@ -28,54 +28,18 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.textField2 = new System.Windows.Forms.TextBox();
-            this.textField1 = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.label3 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
-            // 
-            // textField2
-            // 
-            this.textField2.BackColor = System.Drawing.Color.White;
-            this.textField2.Location = new System.Drawing.Point(92, 38);
-            this.textField2.Name = "textField2";
-            this.textField2.Size = new System.Drawing.Size(163, 24);
-            this.textField2.TabIndex = 0;
-            // 
-            // textField1
-            // 
-            this.textField1.BackColor = System.Drawing.Color.White;
-            this.textField1.Location = new System.Drawing.Point(92, 8);
-            this.textField1.Name = "textField1";
-            this.textField1.Size = new System.Drawing.Size(164, 24);
-            this.textField1.TabIndex = 1;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(3, 11);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(39, 17);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "label1";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(3, 41);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(41, 17);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "label2";
             // 
             // button1
             // 
+            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.button1.Location = new System.Drawing.Point(261, 8);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(54, 85);
+            this.button1.Size = new System.Drawing.Size(54, 26);
             this.button1.TabIndex = 4;
             this.button1.Text = "OK";
             this.button1.UseVisualStyleBackColor = true;
@@ -90,48 +54,39 @@
             "Medium",
             "Wide",
             "Large"});
-            this.comboBox1.Location = new System.Drawing.Point(92, 68);
+            this.comboBox1.Location = new System.Drawing.Point(92, 9);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(163, 25);
             this.comboBox1.TabIndex = 5;
             // 
-            // label3
+            // label1
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(3, 71);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(41, 17);
-            this.label3.TabIndex = 6;
-            this.label3.Text = "label3";
+            this.label1.Location = new System.Drawing.Point(3, 9);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(83, 25);
+            this.label1.TabIndex = 6;
+            this.label1.Text = "Size";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // InputBox
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.White;
-            this.Controls.Add(this.label3);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.button1);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.textField1);
-            this.Controls.Add(this.textField2);
             this.Font = new System.Drawing.Font("Segoe UI Light", 9.5F);
             this.Name = "InputBox";
-            this.Size = new System.Drawing.Size(318, 100);
+            this.Size = new System.Drawing.Size(318, 40);
             this.Load += new System.EventHandler(this.InputBox_Load);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
 
-        private System.Windows.Forms.TextBox textField2;
-        private System.Windows.Forms.TextBox textField1;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.ComboBox comboBox1;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label1;
     }
 }

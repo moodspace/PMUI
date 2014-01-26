@@ -6,13 +6,13 @@ namespace Postmodern_UI
 {
     public class AlignManager
     {
-        private Panel display;
+        private Form display;
         private Tile[,] register;
 
-        public AlignManager(Panel panel)
+        public AlignManager(Form display)
         {
-            register = new Tile[8, 16];
-            display = panel;
+            register = new Tile[42, 4];
+            this.display = display;
         }
 
         internal bool canAdd(Point point, Settings.TSize size)
@@ -39,16 +39,16 @@ namespace Postmodern_UI
 
         internal void Add(Point point, Tile tile, bool isNewTile)
         {
-            for (int m = point.Y; m < point.Y + Settings.getTHeight(tile.TSize); m++)
+            for (int m = point.Y; m < point.Y + Settings.getTHeight(tile.getTSize()); m++)
             {
-                for (int n = point.X; n < point.X + Settings.getTWidth(tile.TSize); n++)
+                for (int n = point.X; n < point.X + Settings.getTWidth(tile.getTSize()); n++)
                 {
                     register[m, n] = tile;
                 }
             }
 
             foreach (Tile t in getTiles(new Point(0, 0))) {
-                fixToAnchor(findTileLocation(t), t); //align the tile on display device
+                setPhysicalPosition(getRegisterLocation(t), t); //align the tile on display device
             }
 
             if (isNewTile)
@@ -57,7 +57,7 @@ namespace Postmodern_UI
                 tile.Show(); //recover display
         }
 
-        internal Point findTileLocation(Tile tile)
+        internal Point getRegisterLocation(Tile tile)
         {
             for (int m = 0; m < register.GetLength(0); m++)
             {
@@ -122,14 +122,14 @@ namespace Postmodern_UI
 
         internal void Remove(Tile tile, bool dispose)
         {
-            Point point = findTileLocation(tile);
-            for (int m = point.Y; m < point.Y + Settings.getTHeight(tile.TSize); m++)
-            {
-                for (int n = point.X; n < point.X + Settings.getTWidth(tile.TSize); n++)
-                {
+            Point point = getRegisterLocation(tile);
+
+            if (point.X < 0 || point.X >= register.GetLength(1) || point.Y < 0 || point.Y >= register.GetLength(0))
+                return;
+
+            for (int m = point.Y; m < point.Y + Settings.getTHeight(tile.getTSize()); m++)
+                for (int n = point.X; n < point.X + Settings.getTWidth(tile.getTSize()); n++)
                     register[m, n] = null;
-                }
-            }
 
             tile.Hide();
 
@@ -150,17 +150,17 @@ namespace Postmodern_UI
 
         internal Point TryAdd(Point tryAddPoint, Tile tile, bool isNewTile)
         {
-            int totalTilesMove = Settings.getTWidth(tile.TSize) * Settings.getTHeight(tile.TSize);
+            int totalTilesMove = Settings.getTWidth(tile.getTSize()) * Settings.getTHeight(tile.getTSize());
             //the first point to claim must be eligible as the top left of a certain sized tile
 
-            Point addPoint = findElligibleInsertion(tryAddPoint, tile.TSize);
+            Point addPoint = findElligibleInsertion(tryAddPoint, tile.getTSize());
             List<Tile> removedTiles = new List<Tile>();
-            if (!canAdd(addPoint, tile.TSize))
+            if (!canAdd(addPoint, tile.getTSize()))
                 removedTiles = RemoveFrom(addPoint, false);
 
             Add(addPoint, tile, isNewTile);
 
-            AddRange(getNext(addPoint, tile.TSize), removedTiles);
+            AddRange(getNext(addPoint, tile.getTSize()), removedTiles);
 
             return addPoint;
         }
@@ -213,27 +213,51 @@ namespace Postmodern_UI
                 // re-align tiles, no need to concern the interference in calling TryAdd
                 // because all tiles required moving have been unregistered, therefore 
                 // no tiles hold while adding. use TryAdd because it excludes impossible positions
-                TryAdd(getNext(lastPosition, tiles[i - 1].TSize), tiles[i], false);
-                lastPosition = findTileLocation(tiles[i]);
+                TryAdd(getNext(lastPosition, tiles[i - 1].getTSize()), tiles[i], false);
+                lastPosition = getRegisterLocation(tiles[i]);
             }
         }
 
-        private void fixToAnchor(Point point, Tile tile)
+        
+        internal void setPhysicalPosition(Point unwrapPosition, Tile tile)
         {
-            tile.Location = new Point(Settings.tile_left_screen +
-                point.X * Settings.tile_unit_length + point.X * Settings.small_span +
-                point.X / 4 * Settings.tile_group_margin_extra, Settings.tile_top_screen +
-                point.Y * Settings.tile_unit_length + point.Y * Settings.small_span);
+            tile.Location = getPhysicalPosition(wrapPosition(unwrapPosition));
         }
 
-        internal Point approximatePosition(Point pointToDisplay)
+        private Point getPhysicalPosition(Point wrappedPosition)
         {
-            int approx_X = (pointToDisplay.X - Settings.tile_left_screen) / 
-                (Settings.tile_unit_length + Settings.small_span);
-            int approx_Y = (pointToDisplay.Y - Settings.tile_top_screen) /
-                    (Settings.tile_unit_length + Settings.small_span);
+            return new Point(Settings.tile_left_screen +
+                wrappedPosition.X * Settings.tile_unit_length + wrappedPosition.X * Settings.small_span +
+                wrappedPosition.X / 4 * Settings.tile_group_margin_extra, Settings.tile_top_screen +
+                wrappedPosition.Y * Settings.tile_unit_length + wrappedPosition.Y * Settings.small_span);
+        }
 
-            return new Point(approx_X, approx_Y);
+        internal Point getRegisterPosition(Point physicalPosition)
+        {
+            int group = (physicalPosition.X - Settings.tile_left_screen) / 
+                (Settings.tile_4X_unit_length + Settings.tile_group_margin_extra);
+
+            int approx_X = (physicalPosition.X - Settings.tile_left_screen - 
+                group * (Settings.tile_4X_unit_length + Settings.small_span + 
+                Settings.tile_group_margin_extra)) / (Settings.tile_unit_length + Settings.small_span);
+
+            int approx_Y = group * 8 + (physicalPosition.Y - Settings.tile_top_screen) / 
+                (Settings.tile_unit_length + Settings.small_span);
+
+            return new Point(approx_X % 4, approx_Y);
+        }
+
+        internal Point wrapPosition(Point unwrappedPosition)
+        {
+            int wrapY = unwrappedPosition.Y % 8;
+            int wrapX = unwrappedPosition.Y / 8 * 4 + unwrappedPosition.X;
+            return new Point(wrapX, wrapY);
+        }
+        internal Point unwrapPosition(Point wrappedPosition)
+        {
+            int unwrapY = wrappedPosition.Y + wrappedPosition.X / 4 * 8;
+            int unwrapX = wrappedPosition.X % 4;
+            return new Point(unwrapX, unwrapY);
         }
 
         internal void move(Point source, Point destination)
@@ -241,18 +265,48 @@ namespace Postmodern_UI
             Tile sourceTile = register[source.Y, source.X];
             
             // find the location that fits sourceTile, may be occupied
-            Point finalDest = findElligibleInsertion(destination, sourceTile.TSize);
+            Point finalDest = findElligibleInsertion(destination, sourceTile.getTSize());
             Tile destTile = register[finalDest.Y, finalDest.X];
 
             this.Remove(sourceTile, false);
 
-            if (destTile != null && destTile.TSize == sourceTile.TSize)
+            if (destTile != null && destTile.getTSize() == sourceTile.getTSize())
             {
                 Remove(destTile, false);
                 Add(source, destTile, false);
             }
 
             this.Add(finalDest, sourceTile, false);
+        }
+
+        internal void paintProjectedFrame(Point physicalPosition, Settings.TSize ts)
+        {
+            Label lblTileProj = (Label)display.Controls.Find("projectedTile", false)[0];
+
+            //convert crude physical position into accurate one
+            physicalPosition = getPhysicalPosition(wrapPosition(physicalPosition));
+
+            if (lblTileProj.Location != physicalPosition)
+            {
+                lblTileProj.SendToBack();
+                lblTileProj.Hide();
+                lblTileProj.BackColor = Color.FromArgb(100, Color.White);
+
+                lblTileProj.Size = Tile.getActualSize(ts);
+
+                lblTileProj.Location = physicalPosition;
+
+                lblTileProj.Left -= 4; lblTileProj.Top -= 4;
+                lblTileProj.Width += 8; lblTileProj.Height += 8;
+
+                lblTileProj.Show();
+            }
+        }
+
+        internal void clearProjectedFrame()
+        {
+            Label lblTileProj = (Label)display.Controls.Find("projectedTile", false)[0];
+            lblTileProj.Hide();
         }
     }
 }

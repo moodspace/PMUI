@@ -11,10 +11,13 @@ namespace Postmodern_UI
 {
     public partial class TileWebsite : Postmodern_UI.Tile
     {
-        public TileWebsite(String[] textgroup, Settings.TSize TSize, Color tileColor, AlignManager am) :
-            base(textgroup, TSize, tileColor, am)
+        Object[] data;
+
+        public TileWebsite(Object[] data, AlignManager am) :
+            base(data, am)
         {
             InitializeComponent();
+            this.data = data;
         }
 
         String url, icon_url;
@@ -25,7 +28,16 @@ namespace Postmodern_UI
 
         public void getIconFromWeb()
         {
-            this.icon = (Bitmap)Image.FromStream(WebRequest.Create(icon_url).GetResponse().GetResponseStream());
+            Bitmap icon = (Bitmap)Image.FromStream(WebRequest.Create(icon_url).GetResponse().GetResponseStream());
+            if (data[1] == null || data[1] is Bitmap)
+            {
+                data[1] = icon;
+            }
+            else
+            {
+                ((Object[])data[1])[0] = icon;
+            }
+            
             this.refreshTile();
         }
 

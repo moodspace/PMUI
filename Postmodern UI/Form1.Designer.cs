@@ -36,13 +36,12 @@
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.timerBackground = new System.Windows.Forms.Timer(this.components);
-            this.panelMain = new System.Windows.Forms.Panel();
             this.labelUsername = new System.Windows.Forms.Label();
+            this.projectedTile = new System.Windows.Forms.Label();
             this.panelTool.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            this.panelMain.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -114,17 +113,6 @@
             this.timerBackground.Interval = 5000;
             this.timerBackground.Tick += new System.EventHandler(this.timerBackground_Tick);
             // 
-            // panelMain
-            // 
-            this.panelMain.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.panelMain.Controls.Add(this.label1);
-            this.panelMain.Controls.Add(this.labelUsername);
-            this.panelMain.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelMain.Location = new System.Drawing.Point(0, 0);
-            this.panelMain.Name = "panelMain";
-            this.panelMain.Size = new System.Drawing.Size(728, 577);
-            this.panelMain.TabIndex = 5;
-            // 
             // labelUsername
             // 
             this.labelUsername.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -143,6 +131,15 @@
             this.labelUsername.MouseLeave += new System.EventHandler(this.labelUsername_MouseLeave);
             this.labelUsername.MouseMove += new System.Windows.Forms.MouseEventHandler(this.labelUsername_MouseMove);
             // 
+            // projectedTile
+            // 
+            this.projectedTile.BackColor = System.Drawing.Color.White;
+            this.projectedTile.Location = new System.Drawing.Point(-3, 1);
+            this.projectedTile.Name = "projectedTile";
+            this.projectedTile.Size = new System.Drawing.Size(89, 34);
+            this.projectedTile.TabIndex = 7;
+            this.projectedTile.Visible = false;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -150,23 +147,24 @@
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(728, 577);
+            this.Controls.Add(this.projectedTile);
+            this.Controls.Add(this.labelUsername);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.panelTool);
-            this.Controls.Add(this.panelMain);
             this.DoubleBuffered = true;
             this.Font = new System.Drawing.Font("Segoe UI Light", 9.5F);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
-            this.Text = "Form1";
+            this.Text = "PMUI";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseMove);
             this.panelTool.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            this.panelMain.ResumeLayout(false);
-            this.panelMain.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -178,8 +176,8 @@
         private System.Windows.Forms.PictureBox pictureBox2;
         private System.Windows.Forms.Label labelUsername;
         private System.Windows.Forms.Timer timerBackground;
-        private System.Windows.Forms.Panel panelMain;
         private System.Windows.Forms.PictureBox pictureBox3;
+        private System.Windows.Forms.Label projectedTile;
     }
 }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 
 namespace Postmodern_UI
@@ -14,10 +15,10 @@ namespace Postmodern_UI
         {
             InitializeComponent();
             //display settings during startup
-            Settings.display_width = System.Windows.Forms.Screen.PrimaryScreen.WorkingArea.Width;
-            Settings.display_height = System.Windows.Forms.Screen.PrimaryScreen.WorkingArea.Height;
+            Settings.display_width = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width;
+            Settings.display_height = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height;
 
-            am = new AlignManager(this.panelMain);
+            am = new AlignManager(this);
 
             foundImgs = Helper.albumGrabber(
                 Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), new Size(1360, 760));
@@ -26,9 +27,10 @@ namespace Postmodern_UI
 
         private Tile addRandTile(int x, int y, Settings.TSize TSize)
         {
-            Tile newTile = new Tile(new String[] { DateTime.Now.Second.ToString(), DateTime.Now.Minute.ToString() },
-                Helper.getRandomUsrImg(new Size(128, 128)), Color.Red, am);
-            newTile.TSize = TSize;
+            String[] texts = new String[] { DateTime.Now.Second.ToString(), DateTime.Now.Minute.ToString() };
+            Bitmap icon = Helper.getRandomUsrImg(new Size(128, 128));
+
+            Tile newTile = new Tile(new Object[] { texts, icon, Settings.TSize.small, null }, am);
             am.TryAdd(new Point(x, y), newTile, true);
             return newTile;
         }
@@ -72,11 +74,14 @@ namespace Postmodern_UI
             labelUsername.BackColor = Settings.secondColor;
         }
 
-        Tile t1, t2, t3;
-
         private void pictureBox1_Click(object sender, EventArgs e)
         {
+            this.SuspendLayout();
+
             addRandTile(0, 0, Settings.TSize.small);
+
+
+            this.ResumeLayout();
             //addRandTile(0, 0, Settings.TSize.wide);
             //addRandTile(0, 0, Settings.TSize.wide);
 
@@ -97,7 +102,8 @@ namespace Postmodern_UI
             picker.Anchor = AnchorStyles.Right & AnchorStyles.Bottom;
             this.Controls.Add(picker);
             picker.BringToFront();*/
-            timerBackground.Enabled = true;
+
+            timerBackground.Enabled = !timerBackground.Enabled;
         }
 
         private void userInfo_Click(object sender, EventArgs e)
@@ -110,17 +116,28 @@ namespace Postmodern_UI
         private void timerBackground_Tick(object sender, EventArgs e)
         {
             imgEnum.MoveNext();
-            this.BackgroundImage = Image.FromFile(imgEnum.Current);
+            Bitmap background;
+
+            using (Image img = Image.FromFile(imgEnum.Current))
+            {
+                background = new Bitmap(img);
+            }
+            this.BackgroundImage = background;
         }
 
         private void pictureBox3_Click(object sender, EventArgs e)
         {
-            TileWebsite newTile = new TileWebsite(new String[] { DateTime.Now.Second.ToString(), DateTime.Now.Minute.ToString() },
-                 Settings.TSize.medium, Color.Red, am);
-            InputBox webInput = new InputBox("Icon URL", "Website URL", "Size", "http://", "http://", newTile, "TileWebsite");
+            this.SuspendLayout();
+
+            String[] texts = new String[] { DateTime.Now.Second.ToString(), DateTime.Now.Minute.ToString() };
+            TileWebsite newTile = new TileWebsite(new Object[] { texts, null, Settings.TSize.medium, null }, am);
+            InputBox webInput = new InputBox(new String[] { "Caption", "Icon URL", "Website URL" }, new String[] { "", "http://", "http://www.g.cn" }, newTile, 1);
             webInput.Location = new Point(40, 40);
-            panelMain.Controls.Add(webInput);
+            Controls.Add(webInput);
             webInput.BringToFront();
+
+            this.ResumeLayout();
         }
+
     }
 }
